@@ -31,10 +31,15 @@ const Cozinha = () => {
   const mesaSelecionada = searchParams.get("mesa");
 
   const carregarPedidos = async () => {
-    const response = await fetch("http://localhost:3001/pedidos");
+  try {
+    const response = await fetch("/api/pedidos");
     const data = await response.json();
     setPedidos(data);
-  };
+  } catch (error) {
+    console.error("Erro ao carregar pedidos:", error);
+  }
+};
+
 
   useEffect(() => {
     carregarPedidos();
@@ -43,13 +48,19 @@ const Cozinha = () => {
   }, []);
 
   const marcarComoPronto = async (id) => {
-  await fetch(`http://localhost:3001/pedidos${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status: "Pronto" }),
-  });
-  carregarPedidos();
+  try {
+    await fetch(`/api/pedidos/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "Pronto" }),
+    });
+    carregarPedidos();
+  } catch (error) {
+    console.error("Erro ao marcar como pronto:", error);
+  }
 };
+
+
 
 
   const pedidosMesa = mesaSelecionada
