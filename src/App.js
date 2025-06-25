@@ -224,7 +224,7 @@ function App() {
     };
 
     try {
-      const response = await fetch("http://localhost:3001/pedidos", {
+      const response = await fetch("/api/pedidos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pedido),
@@ -247,7 +247,7 @@ function App() {
             complemento: "",
             setor: "",
           });
-        }, 3000);
+        }, 300);
       } else {
         console.error("Erro ao enviar pedido:", await response.text());
       }
