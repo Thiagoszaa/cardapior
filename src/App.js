@@ -35,6 +35,7 @@ import RestaurantIcon from "@mui/icons-material/Restaurant";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
+import { supabase } from './supabaseClient'
 import RemoveIcon from "@mui/icons-material/Remove";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -51,7 +52,7 @@ import storeImage from './png/lifebox.png';
 function App() {
   const queryParams = new URLSearchParams(window.location.search);
   const mesa = parseInt(queryParams.get('mesa')) || 1;
-
+const [qrCodePix, setQrCodePix] = useState(null);
   const [carrinho, setCarrinho] = useState([]);
   const [pedidoConfirmado, setPedidoConfirmado] = useState(false);
   const [ingrediente, setIngrediente] = useState("");
@@ -181,6 +182,26 @@ function App() {
     setCarrinho((prev) => prev.filter((_, i) => i !== index));
   };
 
+async function confirmarPedido(pedido) {
+  const { data, error } = await supabase
+    .from('pedidos')
+    .insert([
+      {
+        nome_cliente: pedido.nomeCliente,
+        itens: pedido.itens, // Exemplo: [{nome: 'Pizza', qtd: 2}]
+        total: pedido.total,
+      },
+    ])
+
+  if (error) {
+    console.error('Erro ao enviar pedido:', error)
+  } else {
+    console.log('Pedido enviado com sucesso:', data)
+  }
+}
+
+
+
   const alterarQuantidade = (index, delta) => {
     setCarrinho((prev) => 
       prev.map((item, i) => {
@@ -197,6 +218,49 @@ function App() {
       })
     );
   };
+
+const handlePagamentoPix = async () => {
+  try {
+    const resposta = await fetch('/api/pagamento-pix', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        pedido: {
+          ...dadosCliente,
+          observacoes,
+          itens: carrinho,
+          total: calcularTotal()
+        }
+      })
+    });
+
+    const dados = await resposta.json();
+
+    if (dados.qr_code_url) {
+      setQrCodePix(dados.qr_code_url); // mostra o QR no front
+      setEtapaPedido('pagamento-pix'); // nova etapa que você pode criar
+      aguardarConfirmacaoPagamento(dados.txid); // escuta a confirmação
+    }
+
+  } catch (error) {
+    alert("Erro ao gerar pagamento Pix. Tente novamente.");
+  }
+};
+
+const aguardarConfirmacaoPagamento = async (txid) => {
+  const interval = setInterval(async () => {
+    const resp = await fetch(`/api/status-pix/${txid}`);
+    const { status } = await resp.json();
+
+    if (status === 'paid') {
+      clearInterval(interval);
+      setEtapaPedido('confirmacao');
+    }
+  }, 3000); // verifica a cada 3 segundos
+};
+
+
+
 
   const handleDadosClienteChange = (e) => {
     const { name, value } = e.target;
@@ -697,19 +761,19 @@ function App() {
                         />
                         
                         <TextField
-  label="Telefone"
-  variant="outlined"
-  fullWidth
-  name="telefone"
-  value={dadosCliente.telefone}
-  onChange={handleDadosClienteChange}
-  error={dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{5}-\d{4}$/.test(dadosCliente.telefone)}
-  helperText={
-    dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{5}-\d{4}$/.test(dadosCliente.telefone)
-      ? "Digite no formato (DD) 91234-5678"
-      : ""
-  }
-/>
+                              label="Telefone"
+                              variant="outlined"
+                              fullWidth
+                              name="telefone"
+                              value={dadosCliente.telefone}
+                              onChange={handleDadosClienteChange}
+                              error={dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{5}-\d{4}$/.test(dadosCliente.telefone)}
+                              helperText={
+                              dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{5}-\d{4}$/.test(dadosCliente.telefone)
+                                    ? "Digite no formato (DD) 91234-5678"
+                                    : ""  
+                                }
+                              />
 
                       </Box>
                       
@@ -759,30 +823,46 @@ function App() {
                           sx={{ mb: 2 }}
                         />
                       </Box>
+                      <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 'bold' }}>
+  Forma de pagamento
+</Typography>
+
+<Box sx={{ display: 'flex', gap: 2, flexDirection: 'column', mb: 3 }}>
+  <Button 
+    variant="contained" 
+    fullWidth 
+    size="large"
+    onClick={finalizarPedido}
+    sx={{ 
+      py: 1.5,
+      background: "linear-gradient(45deg, #48BB78 30%, #38A169 90%)",
+      "&:hover": {
+        background: "linear-gradient(45deg, #38A169 30%, #2F855A 90%)",
+      }
+    }}
+  >
+    Pagar para o Entregador
+  </Button>
+
+
+  <Button 
+    variant="contained" 
+    fullWidth 
+    size="large"
+    onClick={handlePagamentoPix}
+    sx={{ 
+      py: 1.5,
+      background: "linear-gradient(45deg, #48BB78 30%, #38A169 90%)",
+      "&:hover": {
+        background: "linear-gradient(45deg, #38A169 30%, #2F855A 90%)",
+      }
+    }}
+  >
+    Pagar via Pix
+  </Button>
+</Box>
+
                       
-                      <Button 
-                        variant="contained" 
-                        fullWidth 
-                        size="large"
-                        onClick={finalizarPedido}
-                        disabled={
-                       !dadosCliente.nome ||
-                       !dadosCliente.telefone ||
-                       !/^\(\d{2}\)\s?\d{5}-\d{4}$/.test(dadosCliente.telefone) ||  // <- validação de formato
-                       !dadosCliente.rua ||
-                       !dadosCliente.numero ||
-                       !dadosCliente.setor
-                        }
-                        sx={{ 
-                          py: 1.5,
-                          background: "linear-gradient(45deg, #48BB78 30%, #38A169 90%)",
-                          "&:hover": {
-                            background: "linear-gradient(45deg, #38A169 30%, #2F855A 90%)",
-                          }
-                        }}
-                      >
-                        Confirmar Pedido
-                      </Button>
                     </Box>
                   )}
 
