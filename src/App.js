@@ -207,7 +207,7 @@ function App() {
     }));
   };
 
-  const finalizarPedido = async () => {
+ const finalizarPedido = async () => {
   const pedido = {
     itens: carrinho.map((item) => ({
       nome: item.nome,
@@ -225,43 +225,43 @@ function App() {
   };
 
   try {
-    console.log('Enviando pedido:', pedido); // Para debug
-    
-    const { data, error } = await supabase
-      .from('pedidos') // Nome da sua tabela no Supabase
-      .insert([pedido]);
+    const response = await fetch("/api/pedidos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(pedido),
+    });
 
-    if (error) {
-      console.error('Erro do Supabase:', error);
-      alert('Erro ao enviar pedido: ' + error.message);
-      return;
+    if (response.ok) {
+      const resData = await response.json();
+      console.log("Pedido enviado com sucesso:", resData);
+
+      setEtapaPedido("confirmacao");
+      setTimeout(() => {
+        setCarrinho([]);
+        setCarrinhoAberto(false);
+        setPedidoConfirmado(true);
+        setObservacoes("");
+        setEtapaPedido("carrinho");
+        setDadosCliente({
+          nome: "",
+          telefone: "",
+          rua: "",
+          numero: "",
+          complemento: "",
+          setor: "",
+        });
+      }, 300);
+    } else {
+      const errorData = await response.json().catch(() => ({}));
+      console.error("Erro ao enviar pedido:", errorData?.error || "Erro desconhecido");
+      alert("Erro ao enviar pedido: " + (errorData?.error || "Erro desconhecido"));
     }
-
-    console.log('Pedido enviado com sucesso:', data);
-    
-    // Sucesso - continua com o fluxo normal
-    setEtapaPedido("confirmacao");
-    setTimeout(() => {
-      setCarrinho([]);
-      setCarrinhoAberto(false);
-      setPedidoConfirmado(true);
-      setObservacoes("");
-      setEtapaPedido("carrinho");
-      setDadosCliente({
-        nome: "",
-        telefone: "",
-        rua: "",
-        numero: "",
-        complemento: "",
-        setor: "",
-      });
-    }, 300);
-    
   } catch (error) {
     console.error("Erro na requisição:", error);
-    alert('Erro ao enviar pedido. Tente novamente.');
+    alert("Erro ao enviar pedido. Tente novamente.");
   }
 };
+
 
   const calcularTotal = () => {
     return carrinho.reduce((total, item) => {
