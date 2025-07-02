@@ -224,31 +224,7 @@ function App() {
     cliente: dadosCliente,
   };
 
-  // ✅ Função auxiliar para enviar ao Supabase
-  const confirmarPedido = async (pedido) => {
-    const { data, error } = await supabase.from("pedidos").insert([
-      {
-        itens: pedido.itens,
-        mesa: pedido.mesa,
-        observacoes: pedido.observacoes,
-        valor_total: pedido.valorTotal,
-        timestamp: pedido.timestamp,
-        cliente: pedido.cliente,
-      },
-    ]);
 
-    if (error) {
-      console.error("Erro ao inserir no Supabase:", error);
-    } else {
-      console.log("Pedido salvo no Supabase:", data);
-    }
-  };
-
-  try {
-    // ✅ Envia para Supabase
-    await confirmarPedido(pedido);
-
-    // ✅ Envia para API local (opcional)
     const response = await fetch("/api/pedidos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -275,9 +251,7 @@ function App() {
     } else {
       console.error("Erro ao enviar pedido:", await response.text());
     }
-  } catch (error) {
-    console.error("Erro na requisição:", error);
-  }
+ 
 };
 
 
