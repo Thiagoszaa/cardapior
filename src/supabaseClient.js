@@ -1,12 +1,9 @@
-
-import dotenv from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
 
-// Carrega as variáveis de ambiente
-dotenv.config()
+
 
 const supabaseUrl = 'https://xwmgjuyuadzpzhpkhsca.supabase.co'
-const supabaseKey = process.env.SUPABASE_ANON_KEY
+const supabaseKey = process.env.REACT_APP_SUPABASE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
   console.error('Variáveis de ambiente não encontradas:', {
