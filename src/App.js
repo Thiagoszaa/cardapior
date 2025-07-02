@@ -207,52 +207,7 @@ function App() {
     }));
   };
 
- const finalizarPedido = async () => {
-  const pedido = {
-    itens: carrinho.map((item) => ({
-      nome: item.nome,
-      preco: item.preco,
-      quantidade: item.quantidade,
-      ingrediente: item.ingrediente || "Nenhuma alteração",
-      adicionais: item.adicionais || [],
-      precoTotal: item.precoTotal,
-    })),
-    mesa: mesa,
-    observacoes: observacoes,
-    valorTotal: calcularTotal(),
-    timestamp: new Date().toISOString(),
-    cliente: dadosCliente,
-  };
 
-
-    const response = await fetch("/api/pedidos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(pedido),
-    });
-
-    if (response.ok) {
-      setEtapaPedido("confirmacao");
-      setTimeout(() => {
-        setCarrinho([]);
-        setCarrinhoAberto(false);
-        setPedidoConfirmado(true);
-        setObservacoes("");
-        setEtapaPedido("carrinho");
-        setDadosCliente({
-          nome: "",
-          telefone: "",
-          rua: "",
-          numero: "",
-          complemento: "",
-          setor: "",
-        });
-      }, 300);
-    } else {
-      console.error("Erro ao enviar pedido:", await response.text());
-    }
- 
-};
 
 
 
@@ -262,6 +217,8 @@ function App() {
     }, 0);
   };
 
+
+  
   const toggleCarrinho = () => {
     setCarrinhoAberto(!carrinhoAberto);
     if (!carrinhoAberto) {
