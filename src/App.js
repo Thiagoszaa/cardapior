@@ -207,7 +207,7 @@ function App() {
     }));
   };
 
- const finalizarPedido = async () => {
+const finalizarPedido = async () => {
   const pedido = {
     itens: carrinho.map((item) => ({
       nome: item.nome,
