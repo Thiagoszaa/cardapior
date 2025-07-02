@@ -40,6 +40,7 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import PhoneIcon from "@mui/icons-material/Phone";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import { supabase } from "./supabaseClient"
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import Cardapio from "./Cardapio";
@@ -206,55 +207,80 @@ function App() {
     }));
   };
 
-  const finalizarPedido = async () => {
-    const pedido = {
-      itens: carrinho.map((item) => ({
-        nome: item.nome,
-        preco: item.preco,
-        quantidade: item.quantidade,
-        ingrediente: item.ingrediente || "Nenhuma alteração",
-        adicionais: item.adicionais || [],
-        precoTotal: item.precoTotal,
-      })),
-      mesa: mesa,
-      observacoes: observacoes,
-      valorTotal: calcularTotal(),
-      timestamp: new Date().toISOString(),
-      cliente: dadosCliente,
-    };
+ const finalizarPedido = async () => {
+  const pedido = {
+    itens: carrinho.map((item) => ({
+      nome: item.nome,
+      preco: item.preco,
+      quantidade: item.quantidade,
+      ingrediente: item.ingrediente || "Nenhuma alteração",
+      adicionais: item.adicionais || [],
+      precoTotal: item.precoTotal,
+    })),
+    mesa: mesa,
+    observacoes: observacoes,
+    valorTotal: calcularTotal(),
+    timestamp: new Date().toISOString(),
+    cliente: dadosCliente,
+  };
 
-    try {
-      const response = await fetch("/api/pedidos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pedido),
-      });
+  // ✅ Define a função de inserir no Supabase
+  const confirmarPedido = async (pedido) => {
+    const { data, error } = await supabase
+      .from("pedidos")
+      .insert([
+        {
+          itens: pedido.itens,
+          mesa: pedido.mesa,
+          observacoes: pedido.observacoes,
+          valor_total: pedido.valorTotal,
+          timestamp: pedido.timestamp,
+          cliente: pedido.cliente,
+        },
+      ]);
 
-      if (response.ok) {
-        // sucesso
-        setEtapaPedido("confirmacao");
-        setTimeout(() => {
-          setCarrinho([]);
-          setCarrinhoAberto(false);
-          setPedidoConfirmado(true);
-          setObservacoes("");
-          setEtapaPedido("carrinho");
-          setDadosCliente({
-            nome: "",
-            telefone: "",
-            rua: "",
-            numero: "",
-            complemento: "",
-            setor: "",
-          });
-        }, 300);
-      } else {
-        console.error("Erro ao enviar pedido:", await response.text());
-      }
-    } catch (error) {
-      console.error("Erro na requisição:", error);
+    if (error) {
+      console.error("Erro ao inserir no Supabase:", error);
+    } else {
+      console.log("Pedido salvo no Supabase:", data);
     }
   };
+
+  try {
+    // ✅ Envia para o Supabase
+    await confirmarPedido(pedido); // <- aqui você chama a função que estava "escura"
+
+    // (opcional) envia para sua API local também
+    const response = await fetch("/api/pedidos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(pedido),
+    });
+
+    if (response.ok) {
+      setEtapaPedido("confirmacao");
+      setTimeout(() => {
+        setCarrinho([]);
+        setCarrinhoAberto(false);
+        setPedidoConfirmado(true);
+        setObservacoes("");
+        setEtapaPedido("carrinho");
+        setDadosCliente({
+          nome: "",
+          telefone: "",
+          rua: "",
+          numero: "",
+          complemento: "",
+          setor: "",
+        });
+      }, 300);
+    } else {
+      console.error("Erro ao enviar pedido:", await response.text());
+    }
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+  }
+};
 
 
   const calcularTotal = () => {
