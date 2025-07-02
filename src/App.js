@@ -224,20 +224,18 @@ function App() {
     cliente: dadosCliente,
   };
 
-  // ✅ Define a função de inserir no Supabase
+  // ✅ Função auxiliar para enviar ao Supabase
   const confirmarPedido = async (pedido) => {
-    const { data, error } = await supabase
-      .from("pedidos")
-      .insert([
-        {
-          itens: pedido.itens,
-          mesa: pedido.mesa,
-          observacoes: pedido.observacoes,
-          valor_total: pedido.valorTotal,
-          timestamp: pedido.timestamp,
-          cliente: pedido.cliente,
-        },
-      ]);
+    const { data, error } = await supabase.from("pedidos").insert([
+      {
+        itens: pedido.itens,
+        mesa: pedido.mesa,
+        observacoes: pedido.observacoes,
+        valor_total: pedido.valorTotal,
+        timestamp: pedido.timestamp,
+        cliente: pedido.cliente,
+      },
+    ]);
 
     if (error) {
       console.error("Erro ao inserir no Supabase:", error);
@@ -247,10 +245,10 @@ function App() {
   };
 
   try {
-    // ✅ Envia para o Supabase
-    await confirmarPedido(pedido); // <- aqui você chama a função que estava "escura"
+    // ✅ Envia para Supabase
+    await confirmarPedido(pedido);
 
-    // (opcional) envia para sua API local também
+    // ✅ Envia para API local (opcional)
     const response = await fetch("/api/pedidos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -281,6 +279,7 @@ function App() {
     console.error("Erro na requisição:", error);
   }
 };
+
 
 
   const calcularTotal = () => {
