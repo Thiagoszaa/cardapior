@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { supabase } from "./supabaseClient";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
   CssBaseline,
@@ -207,54 +208,43 @@ function App() {
   };
 
   const finalizarPedido = async () => {
-    const pedido = {
-      itens: carrinho.map((item) => ({
-        nome: item.nome,
-        preco: item.preco,
-        quantidade: item.quantidade,
-        ingrediente: item.ingrediente || "Nenhuma alteração",
-        adicionais: item.adicionais || [],
-        precoTotal: item.precoTotal,
-      })),
-      mesa: mesa,
-      observacoes: observacoes,
-      valorTotal: calcularTotal(),
-      timestamp: new Date().toISOString(),
-      cliente: dadosCliente,
-    };
-
-    try {
-      const response = await fetch("/api/pedidos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(pedido),
-      });
-
-      if (response.ok) {
-        // sucesso
-        setEtapaPedido("confirmacao");
-        setTimeout(() => {
-          setCarrinho([]);
-          setCarrinhoAberto(false);
-          setPedidoConfirmado(true);
-          setObservacoes("");
-          setEtapaPedido("carrinho");
-          setDadosCliente({
-            nome: "",
-            telefone: "",
-            rua: "",
-            numero: "",
-            complemento: "",
-            setor: "",
-          });
-        }, 300);
-      } else {
-        console.error("Erro ao enviar pedido:", await response.text());
-      }
-    } catch (error) {
-      console.error("Erro na requisição:", error);
-    }
+  const pedido = {
+    nome_cliente: dadosCliente.nome || "Cliente não informado",
+    itens: carrinho, // pode passar o array direto, pois o supabase aceita JSON
+    total: calcularTotal(),
+    data_pedido: new Date().toISOString(),
   };
+
+  try {
+    const { data, error } = await supabase
+      .from("pedidos")
+      .insert([pedido]);
+
+    if (error) {
+      console.error("Erro ao inserir pedido no Supabase:", error);
+      return;
+    }
+
+    setEtapaPedido("confirmacao");
+    setTimeout(() => {
+      setCarrinho([]);
+      setCarrinhoAberto(false);
+      setPedidoConfirmado(true);
+      setObservacoes("");
+      setEtapaPedido("carrinho");
+      setDadosCliente({
+        nome: "",
+        telefone: "",
+        rua: "",
+        numero: "",
+        complemento: "",
+        setor: "",
+      });
+    }, 300);
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+  }
+};
 
 
   const calcularTotal = () => {
