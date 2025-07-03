@@ -36,6 +36,4 @@ app.put("/pedidos/:id", (req, res) => {
   res.json(pedidos[index]);
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
+

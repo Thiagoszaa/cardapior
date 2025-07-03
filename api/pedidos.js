@@ -1,10 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 
-// ⛔️ Nunca use SERVICE_ROLE_KEY no frontend
-// ✅ Use SERVICE_ROLE_KEY apenas aqui no backend
 const supabase = createClient(
-  process.env.REAL_SUPABASE_URL, // Troque para REAL_SUPABASE_URL
-  process.env.REAL_SUPABASE_SERVICE_ROLE_KEY // Troque para REAL_SUPABASE_SERVICE_ROLE_KEY
+  process.env.REAL_SUPABASE_URL,
+  process.env.REAL_SUPABASE_SERVICE_ROLE_KEY
 );
 
 export default async function handler(req, res) {
@@ -15,13 +13,11 @@ export default async function handler(req, res) {
         status: "Em preparo",
       };
 
-      console.log("🔍 Pedido recebido:", pedido);
-
       const { data, error } = await supabase.from("pedidos").insert([pedido]);
 
       if (error) {
         console.error("❌ Erro ao inserir no Supabase:", error);
-        return res.status(500).json({ error: error.message, details: error.details });
+        return res.status(500).json({ error: error.message });
       }
 
       return res.status(201).json(data[0]);
@@ -39,6 +35,7 @@ export default async function handler(req, res) {
     }
 
     return res.status(405).json({ message: "Método não permitido" });
+
   } catch (err) {
     console.error("💥 Erro inesperado:", err);
     return res.status(500).json({ error: "Erro interno no servidor", details: err.message });
