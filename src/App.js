@@ -209,21 +209,19 @@ function App() {
 
 
 const finalizarPedido = async () => {
-  const pedido = {
-    itens: carrinho.map((item) => ({
-      nome: item.nome,
-      preco: item.preco,
-      quantidade: item.quantidade,
-      ingrediente: item.ingrediente || "Nenhuma alteração",
-      adicionais: item.adicionais || [],
-      precoTotal: item.precoTotal,
-    })),
-    mesa,
-    observacoes,
-    valorTotal: calcularTotal(),
-    timestamp: new Date().toISOString(),
-    cliente: dadosCliente,
-  };
+const pedido = {
+  nome_cliente: dadosCliente.nome || "Cliente não informado",
+  itens: carrinho.map((item) => ({
+    nome: item.nome,
+    preco: item.preco,
+    quantidade: item.quantidade,
+    ingrediente: item.ingrediente || "Nenhuma alteração",
+    adicionais: item.adicionais || [],
+    precoTotal: item.precoTotal,
+  })),
+  total: calcularTotal(),
+  data_pedido: new Date().toISOString(),
+};
 
   try {
     const { data, error } = await supabase.from("pedidos").insert([pedido]);
