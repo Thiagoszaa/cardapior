@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { supabase } from './supabaseClient';
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
   CssBaseline,
@@ -207,60 +206,55 @@ function App() {
     }));
   };
 
-const finalizarPedido = async () => {
-  const pedido = {
-    itens: carrinho.map((item) => ({
-      nome: item.nome,
-      preco: item.preco,
-      quantidade: item.quantidade,
-      ingrediente: item.ingrediente || "Nenhuma alteração",
-      adicionais: item.adicionais || [],
-      precoTotal: item.precoTotal,
-    })),
-    mesa: mesa,
-    observacoes: observacoes,
-    valorTotal: calcularTotal(),
-    timestamp: new Date().toISOString(),
-    cliente: dadosCliente,
-  };
+  const finalizarPedido = async () => {
+    const pedido = {
+      itens: carrinho.map((item) => ({
+        nome: item.nome,
+        preco: item.preco,
+        quantidade: item.quantidade,
+        ingrediente: item.ingrediente || "Nenhuma alteração",
+        adicionais: item.adicionais || [],
+        precoTotal: item.precoTotal,
+      })),
+      mesa: mesa,
+      observacoes: observacoes,
+      valorTotal: calcularTotal(),
+      timestamp: new Date().toISOString(),
+      cliente: dadosCliente,
+    };
 
-  try {
-    const response = await fetch("/api/pedidos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(pedido),
-    });
+    try {
+      const response = await fetch("/api/pedidos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pedido),
+      });
 
-    if (response.ok) {
-      const resData = await response.json();
-      console.log("Pedido enviado com sucesso:", resData);
-
-      setEtapaPedido("confirmacao");
-      setTimeout(() => {
-        setCarrinho([]);
-        setCarrinhoAberto(false);
-        setPedidoConfirmado(true);
-        setObservacoes("");
-        setEtapaPedido("carrinho");
-        setDadosCliente({
-          nome: "",
-          telefone: "",
-          rua: "",
-          numero: "",
-          complemento: "",
-          setor: "",
-        });
-      }, 300);
-    } else {
-      const errorData = await response.json().catch(() => ({}));
-      console.error("Erro ao enviar pedido:", errorData?.error || "Erro desconhecido");
-      alert("Erro ao enviar pedido: " + (errorData?.error || "Erro desconhecido"));
+      if (response.ok) {
+        // sucesso
+        setEtapaPedido("confirmacao");
+        setTimeout(() => {
+          setCarrinho([]);
+          setCarrinhoAberto(false);
+          setPedidoConfirmado(true);
+          setObservacoes("");
+          setEtapaPedido("carrinho");
+          setDadosCliente({
+            nome: "",
+            telefone: "",
+            rua: "",
+            numero: "",
+            complemento: "",
+            setor: "",
+          });
+        }, 300);
+      } else {
+        console.error("Erro ao enviar pedido:", await response.text());
+      }
+    } catch (error) {
+      console.error("Erro na requisição:", error);
     }
-  } catch (error) {
-    console.error("Erro na requisição:", error);
-    alert("Erro ao enviar pedido. Tente novamente.");
-  }
-};
+  };
 
 
   const calcularTotal = () => {
