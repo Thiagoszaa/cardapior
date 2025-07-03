@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
- import { supabase } from "./supabaseClient";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
   CssBaseline,
@@ -207,8 +206,7 @@ function App() {
     }));
   };
 
-
-const finalizarPedido = async () => {
+  const finalizarPedido = async () => {
     const pedido = {
       itens: carrinho.map((item) => ({
         nome: item.nome,
@@ -257,7 +255,6 @@ const finalizarPedido = async () => {
       console.error("Erro na requisição:", error);
     }
   };
-
 
 
   const calcularTotal = () => {
