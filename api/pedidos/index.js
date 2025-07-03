@@ -20,7 +20,8 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: error.message });
       }
 
-      return res.status(201).json(data[0]);
+     return res.status(201).json({ message: "Pedido criado com sucesso", data });
+
     }
 
     if (req.method === "GET") {
