@@ -1,4 +1,4 @@
-const express = require("express");
+//** const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
@@ -39,3 +39,4 @@ app.put("/pedidos/:id", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+ //
