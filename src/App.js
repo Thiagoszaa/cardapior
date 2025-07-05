@@ -697,19 +697,19 @@ function App() {
                         />
                         
                         <TextField
-  label="Telefone"
-  variant="outlined"
-  fullWidth
-  name="telefone"
-  value={dadosCliente.telefone}
-  onChange={handleDadosClienteChange}
-  error={dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{5}-\d{4}$/.test(dadosCliente.telefone)}
-  helperText={
-    dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{5}-\d{4}$/.test(dadosCliente.telefone)
-      ? "Digite no formato (DD) 91234-5678"
-      : ""
-  }
-/>
+                            label="Telefone"
+                            variant="outlined"
+                            fullWidth
+                            name="telefone"
+                            value={dadosCliente.telefone}
+                            onChange={handleDadosClienteChange}
+                            error={dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{9}$/.test(dadosCliente.telefone)}
+                            helperText={
+                              dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{9}$/.test(dadosCliente.telefone)
+                                ? "Digite no formato (DD) 912345678"
+                                : ""
+                            }
+                          />
 
                       </Box>
                       
