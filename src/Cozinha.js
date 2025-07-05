@@ -63,11 +63,9 @@ const Cozinha = () => {
 
 
 
-const pedidosMesa = (mesaSelecionada
-  ? pedidos.filter((pedido) => pedido.mesa === Number(mesaSelecionada))
-  : pedidos
-).filter((pedido) => pedido.status === "Em preparo");
-
+  const pedidosMesa = mesaSelecionada
+    ? pedidos.filter((pedido) => pedido.mesa === Number(mesaSelecionada))
+    : pedidos;
 
   return (
     <Box
