@@ -7,7 +7,7 @@ pedidos = globalThis._pedidos.pedidos;
 idAtual = globalThis._pedidos.idAtual;
 
 export default function handler(req, res) {
-  const id = parseInt(req.query.id);
+  const id = req.query.id;
 
   if (req.method === "PUT") {
     const index = pedidos.findIndex((p) => p.id === id);
