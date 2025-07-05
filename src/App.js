@@ -766,7 +766,7 @@ function App() {
                         disabled={
                        !dadosCliente.nome ||
                        !dadosCliente.telefone ||
-                       !/^\(\d{2}\)\s?\d{5}-\d{4}$/.test(dadosCliente.telefone) ||  // <- validação de formato
+                       !/^\(\d{2}\)\s?\d{9}$/.test(dadosCliente.telefone) ||  // <- validação de formato
                        !dadosCliente.rua ||
                        !dadosCliente.numero ||
                        !dadosCliente.setor
