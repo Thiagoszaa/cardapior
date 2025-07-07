@@ -45,8 +45,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import Cardapio from "./Cardapio";
 import Cozinha from "./Cozinha";
 import "./App.css";
-import logoImage from './png/logolifebox.png';
-import storeImage from './png/lifebox.png';
+import logoImage from './png/live.jpg';
+import storeImage from './png/live.jpg';
 
 function App() {
   const queryParams = new URLSearchParams(window.location.search);
@@ -299,7 +299,7 @@ function App() {
                     <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
                       <RestaurantIcon sx={{ mr: 1 }} />
                       <Typography variant="h6" noWrap>
-                        LIFEBOX MENU
+                         MENU
                       </Typography>
                     </Box>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -696,17 +696,17 @@ function App() {
                           sx={{ mb: 2 }}
                         />
                         
-<TextField
-  label="Telefone"
-  value={dadosCliente.telefone}
-  onChange={(e) => setDadosCliente({ ...dadosCliente, telefone: e.target.value })}
-  error={dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{9}$/.test(dadosCliente.telefone)}
-  helperText={
-    dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{9}$/.test(dadosCliente.telefone)
-      ? "Formato esperado: (99) 999999999"
-      : ""
-  }
-/>
+                      <TextField
+                        label="Telefone"
+                        value={dadosCliente.telefone}
+                        onChange={(e) => setDadosCliente({ ...dadosCliente, telefone: e.target.value })}
+                        error={dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{9}$/.test(dadosCliente.telefone)}
+                        helperText={
+                          dadosCliente.telefone !== "" && !/^\(\d{2}\)\s?\d{9}$/.test(dadosCliente.telefone)
+                            ? "Formato esperado: (99) 999999999"
+                            : ""
+                        }
+                      />
 
 
                       </Box>
