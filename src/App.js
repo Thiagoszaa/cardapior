@@ -46,7 +46,7 @@ import Cardapio from "./Cardapio";
 import Cozinha from "./Cozinha";
 import "./App.css";
 import logoImage from './png/live.jpg';
-import storeImage from './png/lifebox.png';
+import storeImage from './png/backrestaurante.jpg';
 
 function App() {
   const queryParams = new URLSearchParams(window.location.search);
