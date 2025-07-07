@@ -46,7 +46,7 @@ import Cardapio from "./Cardapio";
 import Cozinha from "./Cozinha";
 import "./App.css";
 import logoImage from './png/live.jpg';
-import storeImage from './png/live.jpg';
+import storeImage from './png/lifebox.png';
 
 function App() {
   const queryParams = new URLSearchParams(window.location.search);
@@ -299,7 +299,7 @@ function App() {
                     <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
                       <RestaurantIcon sx={{ mr: 1 }} />
                       <Typography variant="h6" noWrap>
-                         MENU
+                         LIVA MENU
                       </Typography>
                     </Box>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
