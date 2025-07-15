@@ -137,7 +137,7 @@ const Cozinha = () => {
                       </ListItemIcon>
                       <ListItemText
                         primary={`${item.nome} - ${item.quantidade}x`}
-                        secondary={`R$ ${item.precoTotal.toFixed(2)}`}
+                        secondary={`R$ ${item.precoTotal.toFixed(2)} | Adicionais: ${item.item.adicionais.map(a => a.nome).join(', ')}`}
                         primaryTypographyProps={{ sx: { color: "white" } }}
                         secondaryTypographyProps={{ sx: { color: "#aaa" } }}
                       />
