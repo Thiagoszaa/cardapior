@@ -129,41 +129,21 @@ const Cozinha = () => {
                 )}
 
                 {/* Itens */}
-<List>
-  {pedido.itens.map((item, i) => (
-    <ListItem key={i} sx={{ pl: 0 }}>
-      <ListItemIcon>
-        <RestaurantIcon sx={{ color: "#ffb74d" }} />
-      </ListItemIcon>
-      <ListItemText
-        primary={`${item.nome} - ${item.quantidade}x`}
-        secondary={
-          <>
-            <div>
-              Adicionais:
-              {item.adicionais.length > 0 ? (
-                item.adicionais.map((adicional, idx) => (
-                  <div key={idx}>
-                    - {adicional.nome}: R$ {adicional.preco.toFixed(2)}
-                  </div>
-                ))
-              ) : (
-                <div>- Nenhum</div>
-              )}
-            </div>
-            <div style={{ marginTop: 4 }}>
-              Total: R$ {item.precoTotal.toFixed(2)}
-            </div>
-          </>
-        }
-        primaryTypographyProps={{ sx: { color: "white" } }}
-        secondaryTypographyProps={{ sx: { color: "#aaa" } }}
-      />
-    </ListItem>
-  ))}
-</List>
-
-
+                <List>
+                  {pedido.itens.map((item, i) => (
+                    <ListItem key={i} sx={{ pl: 0 }}>
+                      <ListItemIcon>
+                        <RestaurantIcon sx={{ color: "#ffb74d" }} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={`${item.nome} - ${item.quantidade}x`}
+                        secondary={`R$ ${item.precoTotal.toFixed(2)}`}
+                        primaryTypographyProps={{ sx: { color: "white" } }}
+                        secondaryTypographyProps={{ sx: { color: "#aaa" } }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
 
                 {/* Total */}
                 <Box sx={{ mt: 1, pt: 1, borderTop: "1px solid #555" }}>
